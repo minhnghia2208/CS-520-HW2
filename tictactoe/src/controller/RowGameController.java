@@ -11,123 +11,104 @@ import model.RowGameModel;
 import view.RowGameGUI;
 
 public class RowGameController {
-    public RowGameModel gameModel;
-    public RowGameGUI gameView;
+    private RowGameModel gameModel;
+    private RowGameGUI gameView;
+	private int width;
 
     /**
      * Creates a new game initializing the GUI.
      */
-    public RowGameController() {
-	gameModel = new RowGameModel();
-	gameView = new RowGameGUI(this);
-
-        for(int row = 0; row<3; row++) {
-            for(int column = 0; column<3 ;column++) {
+	private void initState() {
+		gameModel = new RowGameModel();
+		gameView = new RowGameGUI(this);
+        for(int row = 0; row < this.width; row++) {
+            for(int column = 0; column< this.width;column++) {
 				gameModel.blocksData[row][column].setContents("");
 				gameModel.blocksData[row][column].setIsLegalMove(true);
 				gameView.updateBlock(gameModel,row,column);
             }
         }
+	}
+    public RowGameController(int width) {
+		this.width = width;
+		initState();
+    }
+	public RowGameController() {
+		this.width = 3;
+		initState();
     }
 
-	private boolean straightRow0() {
-		return gameModel.blocksData[0][0].getContents().equals(gameModel.blocksData[0][1].getContents()) &&
-			gameModel.blocksData[0][1].getContents().equals(gameModel.blocksData[0][2].getContents());
-	}
-	private boolean straightRow1() {
-		return gameModel.blocksData[1][2].getContents().equals(gameModel.blocksData[1][1].getContents()) &&
-			gameModel.blocksData[1][1].getContents().equals(gameModel.blocksData[1][0].getContents());
-	}
-	private boolean straightRow2() {
-		return gameModel.blocksData[2][0].getContents().equals(gameModel.blocksData[2][1].getContents()) &&
-			gameModel.blocksData[2][1].getContents().equals(gameModel.blocksData[2][2].getContents());
+	public RowGameModel getGameModel() {
+		return this.gameModel;
 	}
 
-	private boolean straightCol0() {
-		return gameModel.blocksData[0][0].getContents().equals(gameModel.blocksData[1][0].getContents()) &&
-			gameModel.blocksData[1][0].getContents().equals(gameModel.blocksData[2][0].getContents());
-	}
-	private boolean straightCol1() {
-		return 	gameModel.blocksData[0][1].getContents().equals(gameModel.blocksData[1][1].getContents()) &&
-			gameModel.blocksData[1][1].getContents().equals(gameModel.blocksData[2][1].getContents());
-	}
-	private boolean straightCol2() {
-		return gameModel.blocksData[2][2].getContents().equals(gameModel.blocksData[1][2].getContents()) &&
-			gameModel.blocksData[1][2].getContents().equals(gameModel.blocksData[0][2].getContents());
+	public RowGameGUI getGameView() {
+		return this.gameView;
 	}
 
-	private boolean diag03() {
-		return gameModel.blocksData[0][0].getContents().equals(gameModel.blocksData[1][1].getContents()) &&
-			gameModel.blocksData[1][1].getContents().equals(gameModel.blocksData[2][2].getContents());
+	private boolean straightRow(int row) {
+		for (int i = 0; i < this.width-1; i++) {
+			if (!gameModel.blocksData[row][i].getContents()
+			.equals(gameModel.blocksData[row][i+1].getContents())) {
+				return false;
+			}
+		}
+		return true;
 	}
-	private boolean diag30() {
-		return gameModel.blocksData[0][2].getContents().equals(gameModel.blocksData[1][1].getContents()) &&
-			gameModel.blocksData[1][1].getContents().equals(gameModel.blocksData[2][0].getContents());
+
+	private boolean straightCol(int col) {
+		for (int i = 0; i < this.width-1; i++) {
+			if (!gameModel.blocksData[i][col].getContents()
+			.equals(gameModel.blocksData[i+1][col].getContents())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean diag1() {
+		for (int i = 0; i < this.width-1; i++) {
+			if (!gameModel.blocksData[i][i].getContents()
+			.equals(gameModel.blocksData[i+1][i+1].getContents())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean diag2() {
+		for (int i = 0; i < this.width-1; i++) {
+			int len = this.width - 1;
+			if (!gameModel.blocksData[i][len-i].getContents()
+			.equals(gameModel.blocksData[i+1][len-(i+1)].getContents())) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	private boolean isWin(int i, int j) {
-		switch (i) {
-			case 0:
-				switch (j) {
-					case 0: return isWin00();
-					case 1: return isWin01();
-					case 2: return isWin02();
-					default: break;
-				}
-			case 1:
-				switch (j) {
-					case 0: return isWin10();
-					case 1: return isWin11();
-					case 2: return isWin12();
-					default: break;
-				}
-			case 2:
-				switch (j) {
-					case 0: return isWin20();
-					case 1: return isWin21();
-					case 2: return isWin22();
-					default: break;
-				}
-			default: 
-				return false;
+		// return diag1();
+		int div = this.width % 2;
+		if (i == j) {
+			if (div == 0 || i != div + 1) {
+				return straightRow(i) || straightCol(j) || diag1();
+			}
+			else {
+				return straightRow(i) || straightCol(j) || diag1() || diag2();
+			}
+		}
+		else {
+			if ((i == 0 && j == this.width) || (i == this.width || j == 0)) {
+				return straightRow(i) || straightCol(j) || diag2();
+			}
+			else {
+				return straightRow(i) || straightCol(j);
+			}
 		}
 	}
-	private boolean isWin00() {
-		return straightRow0() || straightCol0() || diag03();
-	} 
-
-	private boolean isWin01() {
-		return straightRow0() || straightCol1();
-	}
-
-	private boolean isWin02() {
-		return straightRow0() || straightCol2() || diag30();
-	}
-
-	private boolean isWin10() {
-		return straightRow1() || straightCol0();
-	}
-
-	private boolean isWin11() {
-		return straightRow1() || straightCol1() || diag03()|| diag30();
-	}
-
-	private boolean isWin12() {
-		return straightRow1() || straightCol2();
-	}
-
-	private boolean isWin20() {
-		return straightRow2() || straightCol0() || diag30();
-	}
-
-	private boolean isWin21() {
-		return straightRow2() || straightCol1();
-	}
-
-	private boolean isWin22() {
-		return straightRow2() || straightCol2() || diag03();
-	}
-
+	
 	private void updateState(int i, int j, String icon, String opponent, String msg) {
 		gameModel.blocksData[i][j].setContents(icon);
 		gameView.updateBlock(gameModel,i,j);
