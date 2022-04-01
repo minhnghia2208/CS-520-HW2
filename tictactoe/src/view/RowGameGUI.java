@@ -11,22 +11,20 @@ import model.RowGameModel;
 import controller.RowGameController;
 
 public class RowGameGUI {
+    private int width;
     public JFrame gui = new JFrame("Tic Tac Toe");
     public RowGameModel gameModel = new RowGameModel();
-    public JButton[][] blocks = new JButton[3][3];
+    public JButton[][] blocks;
     public JButton reset = new JButton("Reset");
     public JTextArea playerturn = new JTextArea();
 
-    /**
-     * Creates a new game initializing the GUI.
-     */
-    public RowGameGUI(RowGameController controller) {
+    private void initGUI(RowGameController controller) {
         gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gui.setSize(new Dimension(500, 350));
         gui.setResizable(true);
 
         JPanel gamePanel = new JPanel(new FlowLayout());
-        JPanel game = new JPanel(new GridLayout(3,3));
+        JPanel game = new JPanel(new GridLayout(this.width, this.width));
         gamePanel.add(game, BorderLayout.CENTER);
 
         JPanel options = new JPanel(new FlowLayout());
@@ -39,7 +37,7 @@ public class RowGameGUI {
         gui.add(messages, BorderLayout.SOUTH);
 
         messages.add(playerturn);
-        playerturn.setText("Player 1 to play 'X'");
+        playerturn.setText(RowGameModel.START_TURN);
 
         reset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -48,18 +46,32 @@ public class RowGameGUI {
         });
 
         // Initialize a JButton for each cell of the 3x3 game board.
-        for(int row = 0; row<3; row++) {
-            for(int column = 0; column<3 ;column++) {
+        for(int row = 0; row < this.width; row++) {
+            for(int column = 0; column < this.width; column++) {
                 blocks[row][column] = new JButton();
                 blocks[row][column].setPreferredSize(new Dimension(75,75));
                 game.add(blocks[row][column]);
                 blocks[row][column].addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-			controller.move((JButton)e.getSource());
+			            controller.move((JButton)e.getSource());
                     }
                 });
             }
         }
+    }
+    /**
+     * Creates a new game initializing the GUI.
+     */
+    public RowGameGUI(RowGameController controller) {
+        this.width = 3;
+        blocks = new JButton[this.width][this.width];
+        initGUI(controller);
+    }
+
+    public RowGameGUI(RowGameController controller, int width) {
+        this.width = width;
+        blocks = new JButton[this.width][this.width];
+        initGUI(controller);
     }
 
     /**
@@ -71,7 +83,7 @@ public class RowGameGUI {
      * @param column The column that contains the block
      */
     public void updateBlock(RowGameModel gameModel, int row, int column) {
-	blocks[row][column].setText(gameModel.blocksData[row][column].getContents());
-	blocks[row][column].setEnabled(gameModel.blocksData[row][column].getIsLegalMove());
+        blocks[row][column].setText(gameModel.blocksData[row][column].getContents());
+        blocks[row][column].setEnabled(gameModel.blocksData[row][column].getIsLegalMove());
     }
 }

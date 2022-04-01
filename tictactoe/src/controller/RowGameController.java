@@ -19,10 +19,10 @@ public class RowGameController {
      * Creates a new game initializing the GUI.
      */
 	private void initState() {
-		gameModel = new RowGameModel();
-		gameView = new RowGameGUI(this);
+		gameModel = new RowGameModel(this.width);
+		gameView = new RowGameGUI(this, this.width);
         for(int row = 0; row < this.width; row++) {
-            for(int column = 0; column< this.width;column++) {
+            for(int column = 0; column < this.width; column++) {
 				gameModel.blocksData[row][column].setContents("");
 				gameModel.blocksData[row][column].setIsLegalMove(true);
 				gameView.updateBlock(gameModel,row,column);
@@ -47,7 +47,7 @@ public class RowGameController {
 	}
 
 	private boolean straightRow(int row) {
-		for (int i = 0; i < this.width-1; i++) {
+		for (int i = 0; i < this.width - 1; i++) {
 			if (!gameModel.blocksData[row][i].getContents()
 			.equals(gameModel.blocksData[row][i+1].getContents())) {
 				return false;
@@ -57,7 +57,7 @@ public class RowGameController {
 	}
 
 	private boolean straightCol(int col) {
-		for (int i = 0; i < this.width-1; i++) {
+		for (int i = 0; i < this.width - 1; i++) {
 			if (!gameModel.blocksData[i][col].getContents()
 			.equals(gameModel.blocksData[i+1][col].getContents())) {
 				return false;
@@ -67,7 +67,7 @@ public class RowGameController {
 	}
 
 	private boolean diag1() {
-		for (int i = 0; i < this.width-1; i++) {
+		for (int i = 0; i < this.width - 1; i++) {
 			if (!gameModel.blocksData[i][i].getContents()
 			.equals(gameModel.blocksData[i+1][i+1].getContents())) {
 				return false;
@@ -77,7 +77,7 @@ public class RowGameController {
 	}
 
 	private boolean diag2() {
-		for (int i = 0; i < this.width-1; i++) {
+		for (int i = 0; i < this.width - 1; i++) {
 			int len = this.width - 1;
 			if (!gameModel.blocksData[i][len-i].getContents()
 			.equals(gameModel.blocksData[i+1][len-(i+1)].getContents())) {
@@ -89,10 +89,9 @@ public class RowGameController {
 	}
 	
 	private boolean isWin(int i, int j) {
-		// return diag1();
 		int div = this.width % 2;
 		if (i == j) {
-			if (div == 0 || i != div + 1) {
+			if (div == 0 || i != div) {
 				return straightRow(i) || straightCol(j) || diag1();
 			}
 			else {
@@ -100,7 +99,7 @@ public class RowGameController {
 			}
 		}
 		else {
-			if ((i == 0 && j == this.width) || (i == this.width || j == 0)) {
+			if ((i == 0 && j == this.width-1) || (i == this.width-1 && j == 0)) {
 				return straightRow(i) || straightCol(j) || diag2();
 			}
 			else {
@@ -112,13 +111,13 @@ public class RowGameController {
 	private void updateState(int i, int j, String icon, String opponent, String msg) {
 		gameModel.blocksData[i][j].setContents(icon);
 		gameView.updateBlock(gameModel,i,j);
-		gameModel.player = opponent;
-		if(gameModel.movesLeft<7) {
+		gameModel.setCurrentPlayer(opponent);
+		if(gameModel.getMovesLeft() < 7) {
 			if(isWin(i, j)) {
 				gameModel.setFinalResult(msg);
 				endGame();
 
-			} else if(gameModel.movesLeft==0) {
+			} else if(gameModel.getMovesLeft() == 0) {
 				gameModel.setFinalResult(RowGameModel.GAME_END_NOWINNER);
 			}
 
@@ -155,17 +154,17 @@ public class RowGameController {
      * @param block The block to be moved to by the current player
      */
     public void move(JButton block) {
-		gameModel.movesLeft--;
-		if(gameModel.movesLeft%2 == 1) {
-			gameView.playerturn.setText("'X': Player 1");
+		gameModel.setMovesLeft(gameModel.getMovesLeft() - 1);
+		if(gameModel.getMovesLeft() % 2 == 1) {
+			gameView.playerturn.setText(RowGameModel.PLAYER1_TURN);
 		} else{
-			gameView.playerturn.setText("'O': Player 2");
+			gameView.playerturn.setText(RowGameModel.PLAYER2_TURN);
 		}
 		
-		if(gameModel.player.equals("1")) {
-			checkWin(block, "Player 1 wins!", "X", "2");
+		if(gameModel.getCurrentPlayer().equals("1")) {
+			checkWin(block, RowGameModel.PLAYER1_WIN, "X", "2");
 		} else {
-			checkWin(block, "Player 2 wins!", "O", "1");
+			checkWin(block, RowGameModel.PLAYER2_WIN, "O", "1");
 		}
     }
 
@@ -173,8 +172,8 @@ public class RowGameController {
      * Ends the game disallowing further player turns.
      */
     public void endGame() {
-		for(int row = 0;row<3;row++) {
-			for(int column = 0;column<3;column++) {
+		for(int row = 0; row < this.width ;row++) {
+			for(int column = 0; column < this.width; column++) {
 				gameView.blocks[row][column].setEnabled(false);
 			}
 		}
@@ -184,15 +183,15 @@ public class RowGameController {
      * Resets the game to be able to start playing again.
      */
     public void resetGame() {
-        for(int row = 0;row<3;row++) {
-            for(int column = 0;column<3;column++) {
+        for(int row = 0;row < this.width; row++) {
+            for(int column = 0;column < this.width; column++) {
                 gameModel.blocksData[row][column].reset();
-		gameModel.blocksData[row][column].setIsLegalMove(true);
-		gameView.updateBlock(gameModel,row,column);
+				gameModel.blocksData[row][column].setIsLegalMove(true);
+				gameView.updateBlock(gameModel,row,column);
             }
         }
-        gameModel.player = "1";
-        gameModel.movesLeft = 9;
+        gameModel.setCurrentPlayer("1");
+        gameModel.setMovesLeft(this.width * this.width);
 		gameModel.setFinalResult(null);
         gameView.playerturn.setText("Player 1 to play 'X'");
     }
