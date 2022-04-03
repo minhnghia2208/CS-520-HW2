@@ -12,11 +12,46 @@ import controller.RowGameController;
 
 public class RowGameGUI {
     private int width;
-    public JFrame gui = new JFrame("Tic Tac Toe");
-    public RowGameModel gameModel = new RowGameModel();
-    public JButton[][] blocks;
-    public JButton reset = new JButton("Reset");
-    public JTextArea playerturn = new JTextArea();
+    private JFrame gui = new JFrame("Tic Tac Toe");
+    private RowGameModel gameModel = new RowGameModel();
+    private JButton[][] blocks;
+    private JButton reset = new JButton("Reset");
+    private JTextArea playerturn = new JTextArea();
+
+    public void setPlayerturn(JTextArea playerturn) {
+        this.playerturn = playerturn;
+    }
+    public JTextArea getPlayerturn() {
+        return this.playerturn;
+    }
+    
+    public void setReset(JButton reset) {
+        this.reset = reset;
+    }
+    public JButton getReset() {
+        return this.reset;
+    }
+
+    public void setGameModel(RowGameModel gameModel) {
+        this.gameModel = gameModel;
+    }
+    public RowGameModel getGameModel() {
+        return this.gameModel;
+    }
+
+    public void setGUI(JFrame gui) {
+        this.gui = gui;
+    }
+    public JFrame getGUI() {
+        return this.gui;
+    }
+
+    public void setBlocks(JButton[][] blocks) {
+        this.blocks = blocks;
+    }
+    public JButton[][] getBlocks() {
+        return this.blocks;
+    }
 
     private void initGUI(RowGameController controller) {
         gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

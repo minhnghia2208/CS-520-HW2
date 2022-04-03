@@ -122,30 +122,20 @@ public class RowGameController {
 			}
 
 			if (gameModel.getFinalResult() != null) {
-				gameView.playerturn.setText(gameModel.getFinalResult());
+				JTextArea newPlayerturn = gameView.getPlayerturn();
+				newPlayerturn.setText(gameModel.getFinalResult());
+
+				gameView.setPlayerturn(newPlayerturn);
 			}
 		}
 	}
 	private void checkWin(JButton block, String msg, String icon, String opponent) {
-		
-		if(block==gameView.blocks[0][0]) {
-			updateState(0, 0, icon, opponent, msg);
-	    } else if(block==gameView.blocks[0][1]) {
-			updateState(0, 1, icon, opponent, msg);
-	    } else if(block==gameView.blocks[0][2]) {
-			updateState(0, 2, icon, opponent, msg);
-	    } else if(block==gameView.blocks[1][0]) {
-			updateState(1, 0, icon, opponent, msg);
-	    } else if(block==gameView.blocks[1][1]) {
-			updateState(1, 1, icon, opponent, msg);
-	    } else if(block==gameView.blocks[1][2]) {
-			updateState(1, 2, icon, opponent, msg);
-	    } else if(block==gameView.blocks[2][0]) {
-			updateState(2, 0, icon, opponent, msg);
-	    } else if(block==gameView.blocks[2][1]) {
-			updateState(2, 1, icon, opponent, msg);
-	    } else if(block==gameView.blocks[2][2]) {
-			updateState(2, 2, icon, opponent, msg);
+		for (int i = 0; i < this.width; i++) {
+			for (int j = 0; j < this.width; j++) {
+				if (block == gameView.getBlocks()[i][j]) {
+					updateState(i, j, icon, opponent, msg);
+				}
+			}
 		}
 	}
     /**
@@ -156,9 +146,15 @@ public class RowGameController {
     public void move(JButton block) {
 		gameModel.setMovesLeft(gameModel.getMovesLeft() - 1);
 		if(gameModel.getMovesLeft() % 2 == 1) {
-			gameView.playerturn.setText(RowGameModel.PLAYER1_TURN);
+			JTextArea newPlayerturn = gameView.getPlayerturn();
+			newPlayerturn.setText(RowGameModel.PLAYER1_TURN);
+
+			gameView.setPlayerturn(newPlayerturn);
 		} else{
-			gameView.playerturn.setText(RowGameModel.PLAYER2_TURN);
+			JTextArea newPlayerturn = gameView.getPlayerturn();
+			newPlayerturn.setText(RowGameModel.PLAYER2_TURN);
+
+			gameView.setPlayerturn(newPlayerturn);
 		}
 		
 		if(gameModel.getCurrentPlayer().equals("1")) {
@@ -174,7 +170,10 @@ public class RowGameController {
     public void endGame() {
 		for(int row = 0; row < this.width ;row++) {
 			for(int column = 0; column < this.width; column++) {
-				gameView.blocks[row][column].setEnabled(false);
+				JButton[][] newBlocks = gameView.getBlocks();
+				newBlocks[row][column].setEnabled(false);
+
+				gameView.setBlocks(newBlocks);
 			}
 		}
     }
@@ -193,6 +192,9 @@ public class RowGameController {
         gameModel.setCurrentPlayer("1");
         gameModel.setMovesLeft(this.width * this.width);
 		gameModel.setFinalResult(null);
-        gameView.playerturn.setText("Player 1 to play 'X'");
+		JTextArea newPlayerturn = gameView.getPlayerturn();
+		newPlayerturn.setText("Player 1 to play 'X'");
+
+		gameView.setPlayerturn(newPlayerturn);
     }
 }

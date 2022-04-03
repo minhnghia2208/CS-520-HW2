@@ -1,3 +1,5 @@
+import javax.swing.JFrame;
+
 import controller.RowGameController;
 
 public class RowGameApp 
@@ -7,6 +9,10 @@ public class RowGameApp
      */
     public static void main(String[] args) {
         RowGameController game = new RowGameController();
-        game.getGameView().gui.setVisible(true);
+
+        JFrame newgui = game.getGameView().getGUI();
+        newgui.setVisible(true);
+        
+        game.getGameView().setGUI(newgui);
     }
 }
