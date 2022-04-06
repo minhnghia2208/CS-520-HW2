@@ -18,6 +18,21 @@ public class RowGameGUI {
     private JButton reset = new JButton("Reset");
     private JTextArea playerturn = new JTextArea();
 
+    /**
+	 * Getter for width
+	 * @return int width
+	 */
+	public int getWidth() {
+		return this.width;
+	}
+	/**
+	 * Setter for width
+	 * @param width int
+	 */
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
     public void setPlayerturn(JTextArea playerturn) {
         this.playerturn = playerturn;
     }
@@ -53,34 +68,14 @@ public class RowGameGUI {
         return this.blocks;
     }
 
-    private void initGUI(RowGameController controller) {
-        gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gui.setSize(new Dimension(500, 350));
-        gui.setResizable(true);
-
+    public void initCompA(RowGameController controller) {
         JPanel gamePanel = new JPanel(new FlowLayout());
         JPanel game = new JPanel(new GridLayout(this.width, this.width));
         gamePanel.add(game, BorderLayout.CENTER);
 
-        JPanel options = new JPanel(new FlowLayout());
-        options.add(reset);
-        JPanel messages = new JPanel(new FlowLayout());
-        messages.setBackground(Color.white);
-
         gui.add(gamePanel, BorderLayout.NORTH);
-        gui.add(options, BorderLayout.CENTER);
-        gui.add(messages, BorderLayout.SOUTH);
 
-        messages.add(playerturn);
-        playerturn.setText(RowGameModel.START_TURN);
-
-        reset.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                controller.resetGame();
-            }
-        });
-
-        // Initialize a JButton for each cell of the 3x3 game board.
+        // Initialize a JButton for each cell of the NxN game board.
         for(int row = 0; row < this.width; row++) {
             for(int column = 0; column < this.width; column++) {
                 blocks[row][column] = new JButton();
@@ -93,6 +88,39 @@ public class RowGameGUI {
                 });
             }
         }
+    }
+
+    public void initCompB(RowGameController controller) {
+        JPanel options = new JPanel(new FlowLayout());
+        options.add(reset);
+
+        gui.add(options, BorderLayout.CENTER);
+
+        reset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                controller.resetGame();
+            }
+        });
+    }
+
+    public void initCompC(RowGameController controller) {
+        JPanel messages = new JPanel(new FlowLayout());
+        messages.setBackground(Color.white);
+
+        gui.add(messages, BorderLayout.SOUTH);
+
+        messages.add(playerturn);
+        playerturn.setText(RowGameModel.START_TURN);
+    }
+    
+    public void initGUI(RowGameController controller) {
+        gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gui.setSize(new Dimension(500, 350));
+        gui.setResizable(true);
+
+        initCompA(controller);
+        initCompB(controller);
+        initCompC(controller);
     }
     /**
      * Creates a new game initializing the GUI.

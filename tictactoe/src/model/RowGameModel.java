@@ -31,38 +31,70 @@ public class RowGameModel
             } // end for col
         } // end for row
     }
+
+    /**
+     * Constructor with custom width
+     * @param width
+     */
     public RowGameModel(int width) {
         super();
         this.width = width;
         init();
     }
 
+    /**
+     * Constructor with default width = 3
+     */
     public RowGameModel() {
         super();
         this.width = 3;
         init();
     }
 
+    /**
+     * Getter for player object
+     * @return string: Player object
+     */
     public String getCurrentPlayer() {
         return this.player;
     }
 
+    /**
+     * Setter for player object
+     * @param player String
+     */
     public void setCurrentPlayer(String player) {
         this.player = player;
     }
 
+    /**
+     * getter for movesLeft Object
+     * @return int: movesLeft object
+     */
     public int getMovesLeft() {
         return this.movesLeft;
     }
 
+    /**
+     * setter for movesLeft Object
+     * @param movesLeft
+     */
     public void setMovesLeft(int movesLeft) {
         this.movesLeft = movesLeft;
     }
 
+    /**
+     * getter for finalResult Object
+     * @return
+     */
     public String getFinalResult() {
 	    return this.finalResult;
     }
 
+    /**
+     * Setter for finalResult Object
+     * @param finalResult
+     */
     public void setFinalResult(String finalResult) {
 	    this.finalResult = finalResult;
     }
