@@ -171,21 +171,22 @@ public class RowGameController {
 		gameModel.blocksData[i][j].setContents(icon);
 		gameView.updateBlock(gameModel,i,j);
 		gameModel.setCurrentPlayer(opponent);
-		if(gameModel.getMovesLeft() < 7) {
-			if(isWin(i, j)) {
-				gameModel.setFinalResult(msg);
-				endGame();
 
-			} else if(gameModel.getMovesLeft() == 0) {
-				gameModel.setFinalResult(RowGameModel.GAME_END_NOWINNER);
-			}
+		// System.out.print(gameModel.getMovesLeft());
 
-			if (gameModel.getFinalResult() != null) {
-				JTextArea newPlayerturn = gameView.getPlayerturn();
-				newPlayerturn.setText(gameModel.getFinalResult());
+		if(isWin(i, j)) {
+			gameModel.setFinalResult(msg);
+			endGame();
 
-				gameView.setPlayerturn(newPlayerturn);
-			}
+		} else if(gameModel.getMovesLeft() == 0) {
+			gameModel.setFinalResult(RowGameModel.GAME_END_NOWINNER);
+		}
+
+		if (gameModel.getFinalResult() != null) {
+			JTextArea newPlayerturn = gameView.getPlayerturn();
+			newPlayerturn.setText(gameModel.getFinalResult());
+
+			gameView.setPlayerturn(newPlayerturn);
 		}
 	}
 
